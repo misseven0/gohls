@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -13,7 +12,7 @@ import (
 
 type Cache interface {
 	Set(ctx context.Context, key string, value []byte) error
-	Get(ctx context.Context, ey string) ([]byte, error)
+	Get(ctx context.Context, key string) ([]byte, error)
 }
 
 type DirCache struct {
@@ -51,7 +50,7 @@ func (d *DirCache) Set(ctx context.Context, key string, value []byte) error {
 		log.Errorf("Could not create cache dir %v: %v", d.path, err)
 		return err
 	}
-	cacheTmpFile, err := ioutil.TempFile(d.path, key+".*")
+	cacheTmpFile, err := os.CreateTemp(d.path, key+".*")
 	if err != nil {
 		log.Errorf("Could not create cache file %v: %v", cacheTmpFile, err)
 		return err
